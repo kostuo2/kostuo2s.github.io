@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Здоровье и Wellness</title>
+<style>
+:root {
+  --primary: #4CAF50;
+  --secondary: #2E7D32;
+  --bg-light: #F1FAF1;
+  --text-dark: #333;
+  --white: #ffffff;
+  --accent: #FF6F00;
+  --gold: #FFD700;
+  --shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, Helvetica, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Noto Color Emoji';
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: linear-gradient(180deg, #F1FAF1 0%, #E8F5E9 100%);
+  min-height: 100vh;
+}
+.emoji, .exercise-emoji, .card-icon, .category-card .icon, .dash-card .icon,
+.ach-card-full .ach-icon-big, .completion-screen .icon, .mood-btn,
+.mood-day .emoji, .header-badge, .header-streak, .logo,
+.quiz-result .exercise-emoji, .ach-notify .ach-icon,
+.intensity-card .int-icon {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', 'Segoe UI', Arial, sans-serif !important;
+}
+a { text-decoration: none; color: inherit; cursor: pointer; }
+ul { list-style: none; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+/* Шапка */
+header {
+  background: var(--white);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+.logo {
+  font-weight: bold;
+  font-size: 1.4rem;
+  color: var(--secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.logo::before { content: '\1F33F'; font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif; }
+.nav-links { display: flex; align-items: center; }
+.nav-links li { display: inline-block; margin-left: 22px; }
+.nav-links a { cursor: pointer; font-weight: 600; color: #555; transition: color 0.2s; }
+.nav-links a:hover { color: var(--primary); }
+
+.header-level {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+.header-badge {
+  background: linear-gradient(135deg, #4CAF50, #8BC34A);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.header-streak {
+  background: linear-gradient(135deg, #FF6F00, #FF9800);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.auth-btn {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+.auth-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(76,175,80,0.3); }
+.user-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: bold; font-size: 1rem;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+}
+.user-avatar:hover { transform: scale(1.1); }
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 5000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: white;
+  border-radius: 16px;
+  padding: 35px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal h2 { text-align: center; margin-bottom: 8px; color: var(--secondary); font-size: 1.5rem; }
+.modal-sub { text-align: center; color: #888; font-size: 0.9rem; margin-bottom: 25px; }
+.modal-tabs { display: flex; gap: 0; margin-bottom: 20px; border-bottom: 2px solid #eee; }
+.modal-tab {
+  flex: 1; padding: 10px; text-align: center; cursor: pointer;
+  font-weight: 600; color: #999; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: all 0.2s;
+}
+.modal-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.modal input {
+  width: 100%; padding: 12px 16px; margin-bottom: 12px;
+  border: 2px solid #e0e0e0; border-radius: 10px;
+  font-size: 0.95rem; transition: border-color 0.2s;
+}
+.modal input:focus { outline: none; border-color: var(--primary); }
+.modal-error { color: #e53935; font-size: 0.85rem; margin-bottom: 10px; display: none; }
+.modal-error.show { display: block; }
+.modal .btn { width: 100%; margin-top: 5px; }
+
+/* Hero */
+.hero {
+  padding: 90px 0;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(46,125,50,0.85), rgba(76,175,80,0.75)),
+  url('https://images.unsplash.com/photo-1544005313-94ddf0b57035?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+  color: var(--white);
+}
+.hero h1 { font-size: 2.8rem; margin-bottom: 15px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 25px; }
+.quote-box {
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 12px;
+  padding: 18px 30px;
+  max-width: 520px;
+  margin: 20px auto 0;
+  font-style: italic;
+  font-size: 0.95rem;
+}
+.btn {
+  display: inline-block;
+  padding: 13px 30px;
+  background: var(--primary);
+  color: var(--white);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.25s;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 3px 10px rgba(76,175,80,0.3);
+}
+.btn:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 5px 14px rgba(46,125,50,0.4); }
+section { padding: 60px 0; }
+h2 { text-align: center; margin-bottom: 40px; color: var(--secondary); font-size: 1.8rem; }
+h3 { color: var(--secondary); }
+
+/* Дашборд */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+.dash-card {
+  background: var(--white);
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.2s;
+}
+.dash-card:hover { transform: translateY(-4px); }
+.dash-card .icon { font-size: 2rem; margin-bottom: 10px; }
+.dash-card .value { font-size: 2.2rem; font-weight: bold; color: var(--secondary); }
+.dash-card .label { color: #888; font-size: 0.9rem; margin-top: 5px; }
+.dash-card.clickable { cursor: pointer; }
+.dash-card.clickable:hover { box-shadow: 0 8px 24px rgba(76,175,80,0.2); }
+
+/* XP-бар */
+.xp-bar-container {
+  max-width: 600px; margin: 0 auto 30px;
+  background: var(--white); padding: 22px 30px;
+  border-radius: 14px; box-shadow: var(--shadow);
+}
+.xp-bar-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; color: #777; font-weight: 600; }
+.xp-bar { width: 100%; height: 16px; background: #e0e0e0; border-radius: 8px; overflow: hidden; }
+.xp-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #8BC34A, #4CAF50); background-size: 200% 100%; animation: shimmer 3s linear infinite; transition: width 0.5s; border-radius: 8px; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Карточки направлений */
+.big-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+.card-big {
+  background: var(--white); padding: 40px; border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1); text-align: center;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.card-big::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+.card-big:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.15); }
+.card-icon { font-size: 3rem; margin-bottom: 20px; }
+.card-big h3 { font-size: 1.5rem; margin-bottom: 16px; color: var(--secondary); }
+.card-big p { color: #666; margin-bottom: 24px; }
+.card-btn {
+  display: inline-block; padding: 11px 24px;
+  background: linear-gradient(135deg, var(--primary), #66BB6A);
+  color: var(--white); border-radius: 8px; font-weight: 600; font-size: 0.95rem;
+  cursor: pointer; border: none; transition: all 0.25s; box-shadow: 0 3px 10px rgba(76,175,80,0.3);
+}
+.card-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 14px rgba(76,175,80,0.4); }
+
+/* Страницы */
+.page { display: none; }
+.page.active { display: block; }
+
+/* Категории */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px; max-width: 800px; margin: 0 auto;
+}
+.category-card {
+  background: var(--white); padding: 30px; border-radius: 14px;
+  box-shadow: var(--shadow); text-align: center; cursor: pointer; transition: all 0.25s;
+}
+.category-card:hover { transform: translateY(-6px); box-shadow: 0 10px 26px rgba(0,0,0,0.15); }
+.category-card .icon { font-size: 2.5rem; margin-bottom: 15px; }
+.category-card h3 { color: var(--secondary); margin-bottom: 10px; }
+
+/* Интенсивность */
+.intensity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 25px; max-width: 750px; margin: 0 auto;
+}
+.intensity-card {
+  background: var(--white); padding: 30px; border-radius: 14px;
+  box-shadow: var(--shadow); text-align: center; cursor: pointer; transition: all 0.25s;
+  border: 3px solid transparent;
+}
+.intensity-card:hover { transform: translateY(-6px); box-shadow: 0 10px 26px rgba(0,0,0,0.15); }
+.intensity-card .int-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.intensity-card h3 { margin-bottom: 8px; }
+.intensity-card .int-desc { color: #888; font-size: 0.85rem; margin-bottom: 14px; }
+.intensity-card .int-stats { font-size: 0.8rem; color: #666; line-height: 1.8; }
+.intensity-card.easy { border-color: #81C784; }
+.intensity-card.medium { border-color: #FFB74D; }
+.intensity-card.hard { border-color: #E57373; }
+
+/* Упражнения */
+.exercise-slide {
+  background: var(--white); padding: 40px; border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 600px; margin: 0 auto; text-align: center;
+}
+.exercise-slide h3 { color: var(--secondary); margin-bottom: 10px; }
+.exercise-emoji { font-size: 4rem; margin: 20px 0; }
+.rest-slide { background: linear-gradient(135deg, #E3F2FD, #BBDEFB); border: 2px solid #90caf9; }
+.rest-slide h3 { color: #1565c0; }
+
+.intensity-badge {
+  display: inline-block; padding: 4px 16px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; margin-bottom: 12px;
+}
+.intensity-badge.easy { background: #E8F5E9; color: #2E7D32; }
+.intensity-badge.medium { background: #FFF3E0; color: #E65100; }
+.intensity-badge.hard { background: #FFEBEE; color: #C62828; }
+
+.exercise-detail {
+  background: #F1FAF1; border-left: 4px solid #4CAF50;
+  padding: 14px 18px; border-radius: 8px; margin: 16px 0;
+  text-align: left; font-size: 0.9rem; color: #444; line-height: 1.7;
+}
+.exercise-tips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 14px 0; }
+.tip-chip {
+  background: #FFF3E0; color: #E65100; padding: 5px 14px;
+  border-radius: 20px; font-size: 0.8rem; font-weight: 600;
+  border: 1px solid #FFE0B2;
+}
+
+.timer-display { font-size: 3rem; font-weight: bold; color: var(--secondary); margin: 20px 0; }
+.timer-display.warning { color: #e53935; animation: pulse 1s infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+.progress-bar { width: 100%; height: 10px; background: #ddd; border-radius: 5px; margin: 20px 0; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--primary); transition: width 0.3s; border-radius: 5px; }
+.slide-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
+.slide-btn { padding: 10px 24px; background: var(--primary); color: var(--white); border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: background 0.2s; }
+.slide-btn:hover { background: var(--secondary); }
+.slide-btn:disabled { background: #ccc; cursor: not-allowed; }
+.back-btn { display: inline-block; margin-bottom: 20px; color: var(--secondary); cursor: pointer; font-weight: 600; font-size: 0.95rem; }
+.back-btn:hover { text-decoration: underline; }
+
+.completion-screen { background: var(--white); padding: 50px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; text-align: center; }
+.completion-screen .icon { font-size: 4rem; margin-bottom: 20px; }
+.completion-screen .btn-group { margin-top: 25px; }
+.completion-screen .btn-group .btn { margin: 0 8px; }
+.xp-earned { display: inline-block; background: linear-gradient(135deg, #FFF3E0, #FFE0B2); color: var(--accent); padding: 8px 20px; border-radius: 20px; font-weight: bold; margin: 10px 0; }
+
+/* Опрос */
+.quiz-question { background: var(--white); padding: 35px; border-radius: 14px; box-shadow: var(--shadow); max-width: 600px; margin: 0 auto; }
+.quiz-question h3 { margin-bottom: 20px; }
+.quiz-option { display: block; width: 100%; padding: 15px 22px; margin-bottom: 10px; background: var(--bg-light); border: 2px solid transparent; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
+.quiz-option:hover { border-color: var(--primary); background: #e8f5e9; transform: translateX(4px); }
+.quiz-progress { text-align: center; margin-bottom: 20px; color: #888; font-weight: 600; }
+.quiz-result { background: var(--white); padding: 40px; border-radius: 14px; box-shadow: var(--shadow); max-width: 600px; margin: 0 auto; text-align: center; }
+.quiz-result .score { font-size: 2.5rem; font-weight: bold; background: linear-gradient(135deg, var(--primary), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 20px 0; }
+
+/* Календарь */
+.calendar-grid { display: grid; grid-template-columns: repeat(15, 1fr); gap: 6px; max-width: 500px; margin: 0 auto; }
+.cal-day { aspect-ratio: 1; border-radius: 6px; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; color: #aaa; transition: transform 0.15s; }
+.cal-day.active { background: linear-gradient(135deg, #4CAF50, #66BB6A); color: white; }
+.cal-day.today { border: 2px solid var(--accent); box-shadow: 0 0 8px rgba(255,111,0,0.4); }
+
+/* Настроение */
+.mood-options { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+.mood-btn { font-size: 2.2rem; cursor: pointer; padding: 12px; border-radius: 14px; border: 2px solid transparent; background: var(--white); box-shadow: var(--shadow); transition: all 0.2s; }
+.mood-btn:hover { transform: scale(1.15); }
+.mood-btn.selected { border-color: var(--accent); background: #FFF3E0; }
+.mood-history { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+.mood-day { text-align: center; font-size: 0.75rem; color: #888; }
+.mood-day .emoji { font-size: 1.6rem; }
+
+/* Достижения */
+.achievements-hero { background: linear-gradient(135deg, #2E7D32, #4CAF50); color: white; padding: 50px 20px; text-align: center; border-radius: 0 0 30px 30px; margin-bottom: 40px; }
+.achievements-hero h2 { color: white; margin-bottom: 10px; }
+.achievements-hero p { opacity: 0.9; font-size: 1.1rem; }
+.achievements-stats { display: flex; justify-content: center; gap: 30px; margin-top: 20px; flex-wrap: wrap; }
+.ach-stat { text-align: center; }
+.ach-stat .num { font-size: 2rem; font-weight: bold; }
+.ach-stat .lbl { font-size: 0.85rem; opacity: 0.85; }
+.achievements-grid-full { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 20px; max-width: 900px; margin: 0 auto; }
+.ach-card-full { background: var(--white); padding: 25px 20px; border-radius: 14px; text-align: center; box-shadow: var(--shadow); position: relative; transition: all 0.3s; overflow: hidden; }
+.ach-card-full.unlocked { border: 2px solid var(--gold); box-shadow: 0 4px 20px rgba(255,215,0,0.25); background: linear-gradient(135deg, #fff, #FFFDE7); }
+.ach-card-full.unlocked::before { content: '\2713'; position: absolute; top: 10px; right: 10px; width: 24px; height: 24px; background: var(--gold); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; }
+.ach-card-full.locked { opacity: 0.45; filter: grayscale(0.5); }
+.ach-card-full.locked::before { content: '\1F512'; position: absolute; top: 10px; right: 12px; font-size: 1rem; font-family: 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif; }
+.ach-card-full .ach-icon-big { font-size: 3rem; margin-bottom: 12px; display: block; }
+.ach-card-full.unlocked .ach-icon-big { animation: bounceIn 0.5s ease; }
+@keyframes bounceIn { 0% { transform: scale(0.5); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+.ach-card-full .ach-name { font-weight: bold; font-size: 0.95rem; color: var(--secondary); margin-bottom: 5px; }
+.ach-card-full .ach-desc { font-size: 0.8rem; color: #999; }
+
+/* Уведомление */
+.achievement-notify { position: fixed; top: 80px; right: 20px; background: var(--white); padding: 18px 28px; border-radius: 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.2); z-index: 2000; display: none; animation: slideIn 0.4s ease; border-left: 4px solid var(--gold); }
+.achievement-notify.show { display: block; }
+@keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.achievement-notify .ach-icon { font-size: 2.5rem; }
+.achievement-notify .ach-text { font-weight: bold; color: var(--secondary); }
+.achievement-notify .ach-sub { font-size: 0.85rem; color: #888; margin-top: 2px; }
+
+/* Конфетти */
+.confetti { position: fixed; width: 12px; height: 12px; z-index: 3000; pointer-events: none; animation: fall 3s linear forwards; }
+@keyframes fall { to { transform: translateY(100vh) rotate(360deg); opacity: 0; } }
+
+/* Подвал */
+footer { background: #222; color: #aaa; padding: 35px 0; text-align: center; margin-top: 40px; }
+
+@media (max-width: 600px) {
+  .hero h1 { font-size: 2rem; }
+  nav { flex-direction: column; height: auto; padding: 14px 0; gap: 10px; }
+  .nav-links { margin-top: 8px; }
+  .nav-links li { margin: 0 10px; }
+  .timer-display { font-size: 2.2rem; }
+  .exercise-emoji { font-size: 3rem; }
+  .calendar-grid { grid-template-columns: repeat(10, 1fr); }
+  .achievements-grid-full { grid-template-columns: repeat(2, 1fr); }
+  .achievements-stats { gap: 15px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <div class="logo" onclick="showPage('main')">Wellness Life</div>
+      <div class="header-level" id="header-level">
+        <div class="header-badge">Ур. 1</div>
+        <div class="header-streak">&#x1F525; 0</div>
+      </div>
+      <ul class="nav-links">
+        <li><a onclick="showPage('main')">Главная</a></li>
+        <li><a onclick="showPage('progress')">Прогресс</a></li>
+      </ul>
+      <div id="auth-area"></div>
+    </nav>
+  </div>
+</header>
+
+<!-- Модалка регистрации -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal">
+    <h2 id="modal-title">Вход</h2>
+    <p class="modal-sub" id="modal-sub">Войдите, чтобы сохранять прогресс</p>
+    <div class="modal-tabs">
+      <div class="modal-tab active" onclick="switchTab('login')">Вход</div>
+      <div class="modal-tab" onclick="switchTab('register')">Регистрация</div>
+    </div>
+    <input type="text" id="auth-name" placeholder="Имя" style="display:none;">
+    <input type="email" id="auth-email" placeholder="Email">
+    <input type="password" id="auth-password" placeholder="Пароль (мин. 6 символов)">
+    <div class="modal-error" id="auth-error"></div>
+    <button class="btn" id="auth-submit" onclick="submitAuth()">Войти</button>
+    <p style="text-align:center;margin-top:15px;cursor:pointer;color:#888;font-size:0.85rem;" onclick="closeAuth()">Закрыть</p>
+  </div>
+</div>
+
+<!-- ГЛАВНАЯ -->
+<div class="page active" id="page-main">
+  <section class="hero">
+    <div class="container">
+      <h1>Здоровье и гармония каждый день</h1>
+      <p>Мы помогаем вести здоровый образ жизни, чувствовать себя лучше и находить баланс.</p>
+      <div class="quote-box" id="quote-box"></div>
+      <a onclick="scrollToServices()" class="btn" style="margin-top:25px;">Узнать больше</a>
+    </div>
+  </section>
+  <section>
+    <div class="container">
+      <h2>Ваш прогресс</h2>
+      <div class="xp-bar-container">
+        <div class="xp-bar-label">
+          <span>Уровень <span id="lvl-display">1</span></span>
+          <span><span id="xp-display">0</span> / 100 XP</span>
+        </div>
+        <div class="xp-bar"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+      </div>
+      <div class="dashboard">
+        <div class="dash-card"><div class="icon">&#x1F525;</div><div class="value" id="streak-display">0</div><div class="label">Серия дней</div></div>
+        <div class="dash-card"><div class="icon">&#x1F3C3;</div><div class="value" id="workouts-display">0</div><div class="label">Тренировок</div></div>
+        <div class="dash-card"><div class="icon">&#x1F9D8;</div><div class="value" id="meditations-display">0</div><div class="label">Медитаций</div></div>
+        <div class="dash-card clickable" onclick="showPage('achievements')"><div class="icon">&#x1F3C6;</div><div class="value" id="ach-display">0</div><div class="label">Достижений</div></div>
+      </div>
+    </div>
+  </section>
+  <section id="services">
+    <div class="container">
+      <h2>Наши направления</h2>
+      <div class="big-cards-grid">
+        <div class="card-big">
+          <div class="card-icon">&#x1F3C3;</div>
+          <h3>Тренировки</h3>
+          <p>Программы тренировок под любой уровень. Разминка, силовые, растяжка, кардио, кор.</p>
+          <button class="card-btn" onclick="showPage('training-categories')">Выбрать программу</button>
+        </div>
+        <div class="card-big">
+          <div class="card-icon">&#x1F9D8;</div>
+          <h3>Медитация и релаксация</h3>
+          <p>Дыхательные практики, сканирование тела, благодарность и техники для снижения стресса.</p>
+          <button class="card-btn" onclick="showPage('meditation-categories')">Начать практику</button>
+        </div>
+        <div class="card-big">
+          <div class="card-icon">&#x1F33F;</div>
+          <h3>Консультации по питанию</h3>
+          <p>Пройдите опрос по правильному питанию и получите персональные рекомендации.</p>
+          <button class="card-btn" onclick="startQuiz()">Записаться на консультацию</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ТРЕНИРОВКИ: КАТЕГОРИИ -->
+<div class="page" id="page-training-categories">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('main')">&#8592; Назад</span>
+    <h2>Выберите категорию</h2>
+    <div class="category-grid">
+      <div class="category-card" onclick="selectWorkoutCategory('warmup')">
+        <div class="icon">&#x1F525;</div><h3>Разминка</h3><p>Подготовка тела к нагрузке.</p>
+      </div>
+      <div class="category-card" onclick="selectWorkoutCategory('strength')">
+        <div class="icon">&#x1F4AA;</div><h3>Силовые упражнения</h3><p>Укрепление мышц и выносливости.</p>
+      </div>
+      <div class="category-card" onclick="selectWorkoutCategory('stretch')">
+        <div class="icon">&#x1F938;</div><h3>Растяжка</h3><p>Гибкость и расслабление.</p>
+      </div>
+      <div class="category-card" onclick="selectWorkoutCategory('cardio')">
+        <div class="icon">&#x1F3CB;</div><h3>Кардио</h3><p>Сжигание калорий, выносливость.</p>
+      </div>
+      <div class="category-card" onclick="selectWorkoutCategory('core')">
+        <div class="icon">&#x1F6B4;</div><h3>Кор и пресс</h3><p>Крепкая середина тела.</p>
+      </div>
+    </div>
+  </div></section>
+</div>
+
+<!-- ТРЕНИРОВКИ: ВЫБОР ИНТЕНСИВНОСТИ -->
+<div class="page" id="page-training-intensity">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('training-categories')">&#8592; Назад</span>
+    <h2 id="intensity-title">Выберите интенсивность</h2>
+    <div class="intensity-grid">
+      <div class="intensity-card easy" onclick="startWorkout(currentCategory,'easy')">
+        <div class="int-icon">&#x1F4A7;</div>
+        <h3>Лёгкая</h3>
+        <p class="int-desc">Для новичков и восстановительных дней</p>
+        <div class="int-stats">4 упражнения<br>Отдых 20 сек<br>+30 XP</div>
+      </div>
+      <div class="intensity-card medium" onclick="startWorkout(currentCategory,'medium')">
+        <div class="int-icon">&#x1F525;</div>
+        <h3>Средняя</h3>
+        <p class="int-desc">Сбалансированная нагрузка</p>
+        <div class="int-stats">6 упражнений<br>Отдых 15 сек<br>+50 XP</div>
+      </div>
+      <div class="intensity-card hard" onclick="startWorkout(currentCategory,'hard')">
+        <div class="int-icon">&#x26A1;</div>
+        <h3>Интенсивная</h3>
+        <p class="int-desc">Максимум усилий</p>
+        <div class="int-stats">8 упражнений<br>Отдых 10 сек<br>+80 XP</div>
+      </div>
+    </div>
+  </div></section>
+</div>
+
+<!-- ТРЕНИРОВКИ: СЛАЙДЫ -->
+<div class="page" id="page-workout">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('training-categories')">&#8592; Назад</span>
+    <h2 id="workout-title">Комплекс упражнений</h2>
+    <div class="exercise-slide" id="workout-slide"></div>
+  </div></section>
+</div>
+
+<!-- МЕДИТАЦИЯ: ВЫБОР -->
+<div class="page" id="page-meditation-categories">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('main')">&#8592; Назад</span>
+    <h2>Выберите практику</h2>
+    <div class="category-grid">
+      <div class="category-card" onclick="selectMeditationType('breathing')">
+        <div class="icon">&#x1F32C;&#xFE0F;</div><h3>Дыхательная практика</h3><p>Техника 4-4-4.</p>
+      </div>
+      <div class="category-card" onclick="selectMeditationType('body')">
+        <div class="icon">&#x1F9D8;</div><h3>Сканирование тела</h3><p>Расслабление от стоп до лица.</p>
+      </div>
+      <div class="category-card" onclick="selectMeditationType('rest')">
+        <div class="icon">&#x1F319;</div><h3>Спокойный отдых</h3><p>Полная перезагрузка.</p>
+      </div>
+      <div class="category-card" onclick="selectMeditationType('gratitude')">
+        <div class="icon">&#x1F49B;</div><h3>Практика благодарности</h3><p>Фокус на хорошем.</p>
+      </div>
+    </div>
+  </div></section>
+</div>
+
+<!-- МЕДИТАЦИЯ: ВЫБОР ИНТЕНСИВНОСТИ -->
+<div class="page" id="page-meditation-intensity">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('meditation-categories')">&#8592; Назад</span>
+    <h2 id="med-intensity-title">Выберите длительность</h2>
+    <div class="intensity-grid">
+      <div class="intensity-card easy" onclick="startMeditation(currentMeditationType,'easy')">
+        <div class="int-icon">&#x1F305;</div>
+        <h3>Короткая</h3>
+        <p class="int-desc">Быстрая перезагрузка</p>
+        <div class="int-stats">Все этапы &#215;0.5<br>+15 XP</div>
+      </div>
+      <div class="intensity-card medium" onclick="startMeditation(currentMeditationType,'medium')">
+        <div class="int-icon">&#x1F319;</div>
+        <h3>Стандартная</h3>
+        <p class="int-desc">Рекомендуемая длительность</p>
+        <div class="int-stats">Все этапы &#215;1.0<br>+30 XP</div>
+      </div>
+      <div class="intensity-card hard" onclick="startMeditation(currentMeditationType,'hard')">
+        <div class="int-icon">&#x1F9D8;</div>
+        <h3>Глубокая</h3>
+        <p class="int-desc">Максимальное погружение</p>
+        <div class="int-stats">Все этапы &#215;1.6<br>+50 XP</div>
+      </div>
+    </div>
+  </div></section>
+</div>
+
+<!-- МЕДИТАЦИЯ: СЛАЙДЫ -->
+<div class="page" id="page-meditation">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('meditation-categories')">&#8592; Назад</span>
+    <h2 id="meditation-title">Медитация</h2>
+    <div class="exercise-slide" id="meditation-slide"></div>
+  </div></section>
+</div>
+
+<!-- ОПРОС -->
+<div class="page" id="page-quiz">
+  <section><div class="container">
+    <span class="back-btn" onclick="showPage('main')">&#8592; Назад</span>
+    <h2>Опрос по питанию</h2>
+    <div id="quiz-container"></div>
+  </div></section>
+</div>
+
+<!-- ПРОГРЕСС -->
+<div class="page" id="page-progress">
+  <section><div class="container">
+    <h2>Ваши достижения и прогресс</h2>
+    <div class="xp-bar-container">
+      <div class="xp-bar-label">
+        <span>Уровень <span id="lvl-display2">1</span></span>
+        <span><span id="xp-display2">0</span> / 100 XP</span>
+      </div>
+      <div class="xp-bar"><div class="xp-fill" id="xp-fill2" style="width:0%"></div></div>
+    </div>
+    <div class="dashboard">
+      <div class="dash-card"><div class="icon">&#x1F525;</div><div class="value" id="streak-display2">0</div><div class="label">Серия дней</div></div>
+      <div class="dash-card"><div class="icon">&#x1F3C3;</div><div class="value" id="workouts-display2">0</div><div class="label">Тренировок</div></div>
+      <div class="dash-card"><div class="icon">&#x1F9D8;</div><div class="value" id="meditations-display2">0</div><div class="label">Медитаций</div></div>
+      <div class="dash-card clickable" onclick="showPage('achievements')"><div class="icon">&#x1F3C6;</div><div class="value" id="ach-display2">0</div><div class="label">Достижений</div></div>
+    </div>
+    <h3 style="text-align:center;margin:30px 0 15px;">Календарь активности (30 дней)</h3>
+    <div class="calendar-grid" id="calendar-grid"></div>
+    <h3 style="text-align:center;margin:30px 0 15px;">Дневник настроения</h3>
+    <p style="text-align:center;color:#888;margin-bottom:10px;">Как вы себя чувствуете сегодня?</p>
+    <div class="mood-options" id="mood-options">
+      <div class="mood-btn" onclick="setMood('😀')" data-mood="😀">😀</div>
+      <div class="mood-btn" onclick="setMood('🙂')" data-mood="🙂">🙂</div>
+      <div class="mood-btn" onclick="setMood('😐')" data-mood="😐">😐</div>
+      <div class="mood-btn" onclick="setMood('😕')" data-mood="😕">😕</div>
+      <div class="mood-btn" onclick="setMood('😔')" data-mood="😔">😔</div>
+    </div>
+    <div class="mood-history" id="mood-history"></div>
+    <div style="text-align:center;margin-top:35px;">
+      <button class="btn" onclick="resetProgress()" style="background:#e53935;box-shadow:0 3px 10px rgba(229,57,53,0.3);">Сбросить прогресс</button>
+    </div>
+  </div></section>
+</div>
+
+<!-- СТРАНИЦА ДОСТИЖЕНИЙ -->
+<div class="page" id="page-achievements">
+  <div class="achievements-hero">
+    <div class="container">
+      <h2>&#x1F3C6; Достижения</h2>
+      <p>Соберите все награды на пути к здоровью</p>
+      <div class="achievements-stats">
+        <div class="ach-stat"><div class="num" id="ach-unlocked-count">0</div><div class="lbl">Получено</div></div>
+        <div class="ach-stat"><div class="num" id="ach-total-count">18</div><div class="lbl">Всего</div></div>
+        <div class="ach-stat"><div class="num" id="ach-percent">0%</div><div class="lbl">Прогресс</div></div>
+      </div>
+    </div>
+  </div>
+  <section><div class="container">
+    <div class="achievements-grid-full" id="achievements-grid-full"></div>
+    <div style="text-align:center;margin-top:35px;">
+      <button class="btn" onclick="showPage('main')">&#8592; На главную</button>
+    </div>
+  </div></section>
+</div>
+
+<!-- Уведомление -->
+<div class="achievement-notify" id="ach-notify">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="ach-icon" id="ach-notify-icon">&#x1F3C6;</div>
+    <div>
+      <div class="ach-text" id="ach-notify-text">Новое достижение!</div>
+      <div class="ach-sub" id="ach-notify-sub">Вы разблокировали награду</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Wellness Life. Все права защищены.</p>
+    <p style="font-size:0.9rem;margin-top:8px;">Сайт создан в учебных целях.</p>
+  </div>
+</footer>
+<script>
+// ===== АВТОРИЗАЦИЯ =====
+let currentUser = null;
+
+function getAuthArea() { return document.getElementById('auth-area'); }
+
+function renderAuthArea() {
+  const area = getAuthArea();
+  if (currentUser) {
+    area.innerHTML = '<div class="user-avatar" onclick="logout()" title="Выйти">' + currentUser.name[0].toUpperCase() + '</div>';
+  } else {
+    area.innerHTML = '<button class="auth-btn" onclick="openAuth()">Войти</button>';
+  }
+}
+
+function openAuth() {
+  document.getElementById('auth-modal').classList.add('show');
+  switchTab('login');
+}
+function closeAuth() {
+  document.getElementById('auth-modal').classList.remove('show');
+  document.getElementById('auth-error').classList.remove('show');
+}
+function switchTab(tab) {
+  document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+  const nameInput = document.getElementById('auth-name');
+  if (tab === 'register') {
+    document.querySelector('.modal-tab:nth-child(2)').classList.add('active');
+    document.getElementById('modal-title').textContent = 'Регистрация';
+    document.getElementById('modal-sub').textContent = 'Создайте аккаунт для сохранения прогресса';
+    document.getElementById('auth-submit').textContent = 'Зарегистрироваться';
+    nameInput.style.display = 'block';
+  } else {
+    document.querySelector('.modal-tab:nth-child(1)').classList.add('active');
+    document.getElementById('modal-title').textContent = 'Вход';
+    document.getElementById('modal-sub').textContent = 'Войдите, чтобы сохранять прогресс';
+    document.getElementById('auth-submit').textContent = 'Войти';
+    nameInput.style.display = 'none';
+  }
+}
+
+function submitAuth() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  const isRegister = document.getElementById('auth-submit').textContent.includes('Регистр');
+  const err = document.getElementById('auth-error');
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRe.test(email)) { err.textContent = 'Введите корректный email'; err.classList.add('show'); return; }
+  if (password.length < 6) { err.textContent = 'Пароль минимум 6 символов'; err.classList.add('show'); return; }
+  if (isRegister && name.length < 2) { err.textContent = 'Введите имя (мин. 2 символа)'; err.classList.add('show'); return; }
+
+  let users = JSON.parse(localStorage.getItem('wellness_users') || '{}');
+
+  if (isRegister) {
+    if (users[email]) { err.textContent = 'Пользователь с таким email уже существует'; err.classList.add('show'); return; }
+    users[email] = { name: name, password: password, state: { xp:0, level:1, streak:0, lastVisit:null, workouts:0, meditations:0, quizzes:0, cardio:0, activeDays:[], moods:{}, achievements:{} } };
+    localStorage.setItem('wellness_users', JSON.stringify(users));
+    currentUser = { name: name, email: email };
+    state = JSON.parse(JSON.stringify(users[email].state));
+    saveState();
+    closeAuth();
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-password').value = '';
+    document.getElementById('auth-name').value = '';
+    renderAuthArea();
+    updateUI();
+    showQuote();
+  } else {
+    if (!users[email] || users[email].password !== password) { err.textContent = 'Неверный email или пароль'; err.classList.add('show'); return; }
+    currentUser = { name: users[email].name, email: email };
+    state = JSON.parse(JSON.stringify(users[email].state));
+    closeAuth();
+    renderAuthArea();
+    updateUI();
+    showQuote();
+  }
+}
+
+function logout() {
+  saveUserState();
+  currentUser = null;
+  state = { xp:0, level:1, streak:0, lastVisit:null, workouts:0, meditations:0, quizzes:0, cardio:0, activeDays:[], moods:{}, achievements:{} };
+  renderAuthArea();
+  updateUI();
+  showQuote();
+}
+
+function saveUserState() {
+  if (!currentUser) return;
+  let users = JSON.parse(localStorage.getItem('wellness_users') || '{}');
+  if (users[currentUser.email]) {
+    users[currentUser.email].state = JSON.parse(JSON.stringify(state));
+    localStorage.setItem('wellness_users', JSON.stringify(users));
+  }
+}
+
+// ===== СОСТОЯНИЕ =====
+let state = {
+  xp: 0, level: 1, streak: 0, lastVisit: null,
+  workouts: 0, meditations: 0, quizzes: 0, cardio: 0,
+  activeDays: [], moods: {}, achievements: {}
+};
+
+const achievementsList = [
+  { id:'first_step', icon:'\u{1F463}', name:'Первый шаг', desc:'Первое действие на сайте' },
+  { id:'sprinter', icon:'\u{1F3C3}', name:'Спринтер', desc:'5 тренировок' },
+  { id:'athlete', icon:'\u{1F4AA}', name:'Атлет', desc:'15 тренировок' },
+  { id:'warrior', icon:'\u{1F6E1}\u{FE0F}', name:'Воин', desc:'30 тренировок' },
+  { id:'zen', icon:'\u{1F9D8}', name:'Дзен', desc:'5 медитаций' },
+  { id:'zen_master', icon:'\u{1F54A}\u{FE0F}', name:'Мастер Дзен', desc:'15 медитаций' },
+  { id:'nutritionist', icon:'\u{1F957}', name:'Нутрициолог', desc:'Прошёл опрос по питанию' },
+  { id:'food_expert', icon:'\u{1F96D}', name:'Знаток еды', desc:'Прошёл опрос 3 раза' },
+  { id:'streak3', icon:'\u{1F525}', name:'На волне', desc:'Серия 3 дня' },
+  { id:'streak7', icon:'\u{26A1}', name:'Неделя силы', desc:'Серия 7 дней' },
+  { id:'streak30', icon:'\u{1F451}', name:'Чемпион', desc:'Серия 30 дней' },
+  { id:'lvl5', icon:'\u{2B50}', name:'Звезда', desc:'Достигнут уровень 5' },
+  { id:'lvl10', icon:'\u{1F31F}', name:'Легенда', desc:'Достигнут уровень 10' },
+  { id:'mood_tracker', icon:'\u{1F60A}', name:'Дневник', desc:'Отметил настроение' },
+  { id:'mood_week', icon:'\u{1F4D5}', name:'Недельный дневник', desc:'Настроение 7 дней' },
+  { id:'universal', icon:'\u{1F9E9}', name:'Универсал', desc:'Тренировка + медитация + опрос' },
+  { id:'cardio_king', icon:'\u{1F453}', name:'Король кардио', desc:'10 кардио' },
+  { id:'early_bird', icon:'\u{1F426}', name:'Жаворонок', desc:'Тренировка до 9 утра' }
+];
+
+const quotes = [
+  'Здоровье — это не всё, но всё без здоровья — ничто. — Сократ',
+  'Тело — это храм души. Берегите его.',
+  'Движение — это жизнь. — Аристотель',
+  'Спокойный ум творит чудеса.',
+  'Ты — то, что ты ешь. — Гиппократ',
+  'Здоровье дороже золота. — Шекспир',
+  'Каждый шаг вперёд — это шаг к лучшему себе.',
+  'Начни сегодня, не откладывай на завтра.',
+  'Маленькие шаги ведут к большим результатам.',
+  'Твой главный соперник — ты сам.'
+];
+
+// ===== ЛОКАЛЬНАЯ ДАТА (вместо toISOString) =====
+function getLocalDateStr(d) {
+  d = d || new Date();
+  var y = d.getFullYear();
+  var m = String(d.getMonth() + 1).padStart(2, '0');
+  var day = String(d.getDate()).padStart(2, '0');
+  return y + '-' + m + '-' + day;
+}
+
+// ===== СОХРАНЕНИЕ =====
+function saveState() {
+  localStorage.setItem('wellness_state', JSON.stringify(state));
+  saveUserState();
+}
+function loadState() {
+  const s = localStorage.getItem('wellness_state');
+  if (s) state = JSON.parse(s);
+}
+
+// ===== НАВИГАЦИЯ =====
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  window.scrollTo(0, 0);
+  updateUI();
+}
+
+function scrollToServices() {
+  const services = document.getElementById('services');
+  if (services) services.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== UI =====
+function updateUI() {
+  const headerLevel = document.getElementById('header-level');
+  headerLevel.innerHTML = '<div class="header-badge">Ур. ' + state.level + '</div><div class="header-streak">\u{1F525} ' + state.streak + '</div>';
+  const xpInLvl = state.xp % 100;
+  document.getElementById('xp-fill').style.width = xpInLvl + '%';
+  const f2 = document.getElementById('xp-fill2'); if (f2) f2.style.width = xpInLvl + '%';
+  document.getElementById('xp-display').textContent = xpInLvl;
+  const x2 = document.getElementById('xp-display2'); if (x2) x2.textContent = xpInLvl;
+  document.getElementById('lvl-display').textContent = state.level;
+  const l2 = document.getElementById('lvl-display2'); if (l2) l2.textContent = state.level;
+
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  setVal('streak-display', state.streak);
+  setVal('streak-display2', state.streak);
+  setVal('workouts-display', state.workouts);
+  setVal('workouts-display2', state.workouts);
+  setVal('meditations-display', state.meditations);
+  setVal('meditations-display2', state.meditations);
+  const achCount = Object.keys(state.achievements).length;
+  setVal('ach-display', achCount);
+  setVal('ach-display2', achCount);
+
+  renderCalendar();
+  renderMood();
+  renderAchievementsPage();
+}
+
+// ===== STREAK =====
+function checkStreak() {
+  if (!state.lastVisit) return;
+  var today = getLocalDateStr();
+  if (state.lastVisit === today) return;
+  var yesterday = getLocalDateStr(new Date(Date.now() - 86400000));
+  if (state.lastVisit !== yesterday) {
+    state.streak = 0;
+    saveState();
+  }
+}
+
+function markActiveToday() {
+  var today = getLocalDateStr();
+  if (!state.activeDays.includes(today)) {
+    state.activeDays.push(today);
+    if (state.activeDays.length > 60) state.activeDays.shift();
+    state.streak++;
+  }
+  state.lastVisit = today;
+  saveState();
+  checkAchievements();
+}
+
+// ===== XP =====
+function addXP(amount) {
+  state.xp += amount;
+  var newLevel = Math.floor(state.xp / 100) + 1;
+  if (newLevel > state.level) {
+    state.level = newLevel;
+    fireConfetti();
+  }
+  saveState();
+  checkAchievements();
+  updateUI();
+}
+
+// ===== КОНФЕТТИ =====
+function fireConfetti() {
+  const colors = ['#4CAF50', '#8BC34A', '#FF6F00', '#FFD600', '#E91E63', '#2196F3'];
+  for (let i = 0; i < 70; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random() * colors.length)];
+    c.style.animationDelay = Math.random() * 2 + 's';
+    c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 4000);
+  }
+}
+
+// ===== ДОСТИЖЕНИЯ =====
+function unlockAchievement(id) {
+  if (state.achievements[id]) return;
+  const ach = achievementsList.find(a => a.id === id);
+  if (!ach) return;
+  state.achievements[id] = true;
+  saveState();
+  showAchievementNotification(ach);
+}
+function showAchievementNotification(ach) {
+  const notify = document.getElementById('ach-notify');
+  document.getElementById('ach-notify-icon').textContent = ach.icon;
+  document.getElementById('ach-notify-text').textContent = ach.name;
+  document.getElementById('ach-notify-sub').textContent = ach.desc;
+  notify.classList.add('show');
+  setTimeout(() => notify.classList.remove('show'), 4000);
+}
+function checkAchievements() {
+  if (state.workouts + state.meditations + state.quizzes > 0) unlockAchievement('first_step');
+  if (state.workouts >= 5) unlockAchievement('sprinter');
+  if (state.workouts >= 15) unlockAchievement('athlete');
+  if (state.workouts >= 30) unlockAchievement('warrior');
+  if (state.meditations >= 5) unlockAchievement('zen');
+  if (state.meditations >= 15) unlockAchievement('zen_master');
+  if (state.quizzes >= 1) unlockAchievement('nutritionist');
+  if (state.quizzes >= 3) unlockAchievement('food_expert');
+  if (state.streak >= 3) unlockAchievement('streak3');
+  if (state.streak >= 7) unlockAchievement('streak7');
+  if (state.streak >= 30) unlockAchievement('streak30');
+  if (state.level >= 5) unlockAchievement('lvl5');
+  if (state.level >= 10) unlockAchievement('lvl10');
+  if (state.cardio >= 10) unlockAchievement('cardio_king');
+  var moodDays = Object.keys(state.moods).length;
+  if (moodDays >= 7) unlockAchievement('mood_week');
+  if (state.workouts > 0 && state.meditations > 0 && state.quizzes > 0) unlockAchievement('universal');
+}
+function renderAchievementsPage() {
+  const grid = document.getElementById('achievements-grid-full');
+  if (!grid) return;
+  grid.innerHTML = achievementsList.map(a => {
+    var unlocked = state.achievements[a.id];
+    return '<div class="ach-card-full ' + (unlocked ? 'unlocked' : 'locked') + '"><span class="ach-icon-big">' + a.icon + '</span><div class="ach-name">' + a.name + '</div><div class="ach-desc">' + a.desc + '</div></div>';
+  }).join('');
+  var unlockedCount = Object.keys(state.achievements).length;
+  var total = achievementsList.length;
+  var percent = Math.round(unlockedCount / total * 100);
+  document.getElementById('ach-unlocked-count').textContent = unlockedCount;
+  document.getElementById('ach-total-count').textContent = total;
+  document.getElementById('ach-percent').textContent = percent + '%';
+}
+
+// ===== КАЛЕНДАРЬ =====
+function renderCalendar() {
+  const grid = document.getElementById('calendar-grid');
+  if (!grid) return;
+  var today = getLocalDateStr();
+  var html = '';
+  for (var i = 29; i >= 0; i--) {
+    var d = new Date(Date.now() - i * 86400000);
+    var dStr = getLocalDateStr(d);
+    var isActive = state.activeDays.indexOf(dStr) !== -1;
+    var isToday = dStr === today;
+    html += '<div class="cal-day ' + (isActive ? 'active' : '') + ' ' + (isToday ? 'today' : '') + '">' + d.getDate() + '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+// ===== НАСТРОЕНИЕ =====
+function setMood(mood) {
+  var today = getLocalDateStr();
+  state.moods[today] = mood;
+  saveState();
+  unlockAchievement('mood_tracker');
+  var moodDays = Object.keys(state.moods).length;
+  if (moodDays >= 7) unlockAchievement('mood_week');
+  renderMood();
+}
+function renderMood() {
+  const opts = document.getElementById('mood-options');
+  if (!opts) return;
+  var today = getLocalDateStr();
+  var todayMood = state.moods[today];
+  opts.querySelectorAll('.mood-btn').forEach(b => b.classList.toggle('selected', b.dataset.mood === todayMood));
+  const hist = document.getElementById('mood-history');
+  var html = '';
+  for (var i = 6; i >= 0; i--) {
+    var d = new Date(Date.now() - i * 86400000);
+    var dStr = getLocalDateStr(d);
+    var mood = state.moods[dStr] || '\u2014';
+    var dayLabel = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'][d.getDay()];
+    html += '<div class="mood-day"><div class="emoji">' + mood + '</div>' + dayLabel + '</div>';
+  }
+  hist.innerHTML = html;
+}
+
+// ===== ЦИТАТЫ =====
+function showQuote() {
+  document.getElementById('quote-box').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+// ===== СБРОС =====
+function resetProgress() {
+  if (confirm('Сбросить весь прогресс? Это действие нельзя отменить.')) {
+    state = { xp:0, level:1, streak:0, lastVisit:null, workouts:0, meditations:0, quizzes:0, cardio:0, activeDays:[], moods:{}, achievements:{} };
+    saveState();
+    updateUI();
+  }
+}
+
+// ===== КОНФИГ ИНТЕНСИВНОСТИ =====
+var intensityConfig = {
+  easy:   { count: 4, timeMul: 0.7, restTime: 20, xp: 30, label: 'Лёгкая',  badgeClass: 'easy' },
+  medium: { count: 6, timeMul: 1.0, restTime: 15, xp: 50, label: 'Средняя', badgeClass: 'medium' },
+  hard:   { count: 8, timeMul: 1.4, restTime: 10, xp: 80, label: 'Интенсивная', badgeClass: 'hard' }
+};
+var meditationIntensityConfig = {
+  easy:   { timeMul: 0.5, xp: 15, label: 'Короткая',   badgeClass: 'easy' },
+  medium: { timeMul: 1.0, xp: 30, label: 'Стандартная', badgeClass: 'medium' },
+  hard:   { timeMul: 1.6, xp: 50, label: 'Глубокая',    badgeClass: 'hard' }
+};
+
+// ===== УПРАЖНЕНИЯ =====
+var exerciseData = {
+  warmup: [
+    { emoji:'\u{1F3C3}', name:'Бег на месте', desc:'Лёгкий бег, руки двигаются свободно.', time:30,
+      detail:'Встаньте прямо, ноги на ширине плеч. Начните лёгкий бег на месте, не отрывая носки далеко от пола. Руки согните в локтях под 90 градусов и двигайте ими в такт шагам. Дышите ровно, не задерживайте дыхание.',
+      tips:['Спина прямо','Лёгкий темп','Дышите носом'] },
+    { emoji:'\u{1F504}', name:'Вращения руками', desc:'Круговые движения руками вперёд и назад.', time:25,
+      detail:'Встаньте прямо, ноги на ширине плеч. Поднимите руки в стороны на уровень плеч. Делайте круговые движения руками вперёд — 10 раз, затем назад — 10 раз. Движения плавные, без рывков.',
+      tips:['Плечи вниз','Плавные круги','Не прогибайтесь'] },
+    { emoji:'\u{1F9B6}', name:'Высокие колени', desc:'Поднимайте колени до уровня бёдер.', time:30,
+      detail:'Встаньте прямо. Бегите на месте, поднимая колени так высоко, чтобы бёдра были параллельны полу. Руки на уровне бёдер, касайтесь коленями ладоней. Темп средний.',
+      tips:['Корпус прямо','Колени до бёдер','Ритмично'] },
+    { emoji:'\u{2B50}', name:'Прыжки «Звезда»', desc:'Прыжок — ноги врозь, руки вверх.', time:25,
+      detail:'Встаньте прямо, ноги вместе, руки опущены. Прыгните — ноги врозь, руки поднимите над головой. Прыгните обратно. Приземляйтесь мягко на носки.',
+      tips:['Мягкое приземление','Носки','Пружините'] },
+    { emoji:'\u{1F300}', name:'Наклоны в стороны', desc:'Руки на поясе, наклоны вправо-влево.', time:20,
+      detail:'Встаньте прямо, ноги на ширине плеч, руки на поясе. Наклонитесь вправо, потянитесь правой рукой вниз вдоль бедра. Вернитесь в центр. Наклонитесь влево.',
+      tips:['Только вбок','Без наклона вперёд','Тянитесь'] },
+    { emoji:'\u{1F9B6}', name:'Вращения стопами', desc:'Встаньте на носки, вращайте стопами.', time:20,
+      detail:'Сядьте или встаньте, приподнимите одну стопу. Вращайте ею по часовой стрелке 10 раз, затем против — 10 раз. Повторите другой стопой.',
+      tips:['Медленно','Полная амплитуда','Каждая стопа'] },
+    { emoji:'\u{1F938}', name:'Выпады', desc:'Шагните вперёд, опустите таз. Поочерёдно.', time:30,
+      detail:'Встаньте прямо. Шагните правой ногой вперёд на широкий шаг. Опустите таз вниз, сгибая оба колена до 90 градусов. Вернитесь. Повторите левой ногой.',
+      tips:['Колени 90°','Таз прямо','Не касайтесь пола'] },
+    { emoji:'\u{1F483}', name:'Боковые шаги', desc:'Шаг вправо — присед, шаг влево — присед.', time:25,
+      detail:'Встаньте прямо, ноги вместе. Шагните вправо и присядьте, отводя таз назад. Вернитесь. Шагните влево и присядьте.',
+      tips:['Спина прямо','Колени за носками','Таз назад'] },
+    { emoji:'\u{1F3C4}', name:'Наклоны вперёд', desc:'Руки вверх, плавный наклон к полу.', time:20,
+      detail:'Встаньте прямо, поднимите руки вверх. Медленно наклонитесь вперёд, тянитесь руками к полу. Колени слегка согнуты. Задержитесь внизу 2 секунды.',
+      tips:['Колени мягкие','Тянитесь вниз','Плавно'] },
+    { emoji:'\u{1F3B1}', name:'Вращение бёдрами', desc:'Круговые движения бёдрами.', time:20,
+      detail:'Встаньте прямо, ноги на ширине плеч, руки на бёдрах. Делайте круговые движения бёдрами по часовой стрелке 10 раз, затем против 10 раз.',
+      tips:['Широкие круги','Плавно','Руки на бёдрах'] },
+    { emoji:'\u{1F4AA}', name:'Круговые движения плечами', desc:'Поднимите плечи к ушам и отведите назад.', time:20,
+      detail:'Встаньте прямо. Поднимите плечи к ушам, отведите назад и опустите вниз — круговое движение. 10 раз назад, 10 вперёд.',
+      tips:['Медленно','Полный круг','Без спешки'] },
+    { emoji:'\u{1F9BE}', name:'Сгибание-разгибание ног', desc:'Лёжа на спине, сгибайте и разгибайте ноги.', time:25,
+      detail:'Лягте на спину, ноги вытянуты. Поочерёдно сгибайте каждую ногу в колене, подтягивая к груди, затем выпрямляйте.',
+      tips:['Плавно','К груди','Поочерёдно'] },
+    { emoji:'\u{1F6B6}', name:'Ходьба на месте', desc:'Шаги на месте, высоко поднимая колени.', time:25,
+      detail:'Встаньте прямо. Шагайте на месте, поднимая колени до уровня пояса. Руки двигаются в такт. Спина прямая.',
+      tips:['Колени высоко','Спина прямо','Смотрите вперёд'] },
+    { emoji:'\u{1F3B8}', name:'Пружинящие приседы', desc:'Маленькие приседания, не опускаясь до конца.', time:25,
+      detail:'Встаньте прямо, ноги на ширине плеч. Присядьте на четверть. Делайте пружинящие движения вверх-вниз с малой амплитудой.',
+      tips:['Малая амплитуда','Пятки на полу','Ритмично'] },
+    { emoji:'\u{1F317}', name:'Скручивания стоя', desc:'Руки в стороны, поворот корпуса вправо-влево.', time:20,
+      detail:'Встаньте прямо, ноги на ширине плеч, руки вытянуты в стороны. Поворачивайте корпус вправо, затем влево. Бёдра неподвижны.',
+      tips:['Бёдра неподвижны','Руки в стороны','Поворот корпуса'] }
+  ],
+  strength: [
+    { emoji:'\u{1F4AA}', name:'Отжимания', desc:'Классические или с колен. Тело — прямая линия.', time:40,
+      detail:'Встаньте в упор лёжа, руки чуть шире плеч. Опускайте тело, сгибая локти, пока грудь почти не коснётся пола. Выжмите обратно. Если тяжело — с колен.',
+      tips:['Тело — линия','Локти 45°','Грудь почти у пола'] },
+    { emoji:'\u{1F9B6}', name:'Приседания', desc:'Спина прямая, колени не выходят за носки.', time:40,
+      detail:'Встаньте прямо, ноги на ширине плеч. Отведите таз назад, как будто садитесь на стул. Опускайтесь до параллели бёдер с полом. Встаньте, напрягая ягодицы.',
+      tips:['Таз назад','Колени за носками','Спина прямая'] },
+    { emoji:'\u{1F3CB}', name:'Планка', desc:'На локтях, тело вытянуто, живот втянут.', time:35,
+      detail:'Встаньте в упор лёжа на локтях. Локти под плечами. Тело — прямая линия от головы до пяток. Втяните живот, напрягите ягодицы.',
+      tips:['Тело прямо','Живот втянут','Не прогибайтесь'] },
+    { emoji:'\u{1F9B6}', name:'Выпады с прыжком', desc:'Прыжок со сменой ног в выпаде.', time:30,
+      detail:'Встаньте прямо. Шагните правой ногой вперёд в выпад. Прыгните вверх и смените ноги в воздухе. Приземляйтесь мягко.',
+      tips:['Мягкое приземление','Колени 90°','Прыжок вверх'] },
+    { emoji:'\u{1F4AA}', name:'Обратные отжимания', desc:'От стула. Локти назад.', time:30,
+      detail:'Сядьте на край стула, обхватите край ладонями. Сдвиньте таз вперёд. Сгибая локти, опускайте тело вниз. Выжмите обратно.',
+      tips:['Локти назад','Таз близко к стулу','Не разводите локти'] },
+    { emoji:'\u{1F504}', name:'Скручивания', desc:'Лёжа на спине, поднимайте корпус.', time:30,
+      detail:'Лягте на спину, ноги согнуты. Поднимайте лопатки от пола, напрягая пресс. Поясница прижата к полу.',
+      tips:['Поясница на полу','Лопатки вверх','Не тяните шею'] },
+    { emoji:'\u{1F3C4}', name:'Альпинист', desc:'В упоре лёжа, подтягивайте колени к груди.', time:35,
+      detail:'Встаньте в упор лёжа, руки под плечами. Быстро поочерёдно подтягивайте колени к груди. Тело прямое, таз не поднимайте.',
+      tips:['Тело прямо','Таз вниз','Быстрый темп'] },
+    { emoji:'\u{2B50}', name:'Бёрпи', desc:'Присед — упор — отжимание — прыжок.', time:30,
+      detail:'Из положения стоя присядьте, поставьте ладони на пол. Прыгните ногами назад в упор лёжа, отожмитесь. Прыгните ногами к рукам, выпрыгните вверх.',
+      tips:['Плавно','Без пауз','Прыжок вверх'] },
+    { emoji:'\u{1F9B6}', name:'Стульчик у стены', desc:'Спина к стене, бёдра параллельны полу.', time:35,
+      detail:'Прижмите спину к стене. Сдвигайтесь вниз, пока бёдра не станут параллельны полу. Колени под углом 90 градусов. Удерживайте.',
+      tips:['Бёдра параллельно','Колени 90°','Спина к стене'] },
+    { emoji:'\u{1F4AA}', name:'Супермен', desc:'Лёжа на животе, поднимите руки и ноги.', time:25,
+      detail:'Лягте на живот, руки вытянуты вперёд. Поднимите руки, грудь и ноги от пола. Удержите 2 секунды, медленно опустите.',
+      tips:['Смотрите вниз','Поднимите всё','Держите 2 сек'] },
+    { emoji:'\u{1F3CB}', name:'Планка с подъёмом рук', desc:'В планке поочерёдно поднимайте руки вперёд.', time:30,
+      detail:'Встаньте в планку на локтях. Поочерёдно вытягивайте правую и левую руку вперёд. Тело не раскачивается.',
+      tips:['Таз неподвижен','Рука прямо','Тело стабильно'] },
+    { emoji:'\u{1F9B6}', name:'Приседания с выпрыгиванием', desc:'Присед, затем прыжок вверх.', time:30,
+      detail:'Присядьте до параллели. Из нижней позиции выпрыгните вверх, вытянув руки над головой. Приземляйтесь мягко.',
+      tips:['Мягкое приземление','Прыжок максимум','Колени мягкие'] },
+    { emoji:'\u{1F4AA}', name:'Отжимания узким хватом', desc:'Руки уже плеч. Работают трицепсы.', time:30,
+      detail:'Встаньте в упор лёжа, руки под грудью уже плеч. Опускайтесь, прижимая локти к телу. Выжмите обратно.',
+      tips:['Локти к телу','Руки узко','Трицепс'] },
+    { emoji:'\u{1F504}', name:'Подъём ног лёжа', desc:'Лёжа на спине, поднимайте прямые ноги.', time:30,
+      detail:'Лягте на спину, ноги прямые. Медленно поднимайте прямые ноги до угла 90 градусов. Медленно опускайте.',
+      tips:['Поясница на полу','Ноги прямые','Медленно'] },
+    { emoji:'\u{1F3C4}', name:'Лыжник', desc:'Прыжки вперёд-назад, руки двигаются как при беге на лыжах.', time:30,
+      detail:'Прыгайте одной ногой вперёд, другой назад, меняйте в прыжке. Руки двигаются в противофазе ногам.',
+      tips:['Мягкое приземление','Руки в противофазе','Смена ног'] }
+  ],
+  stretch: [
+    { emoji:'\u{1F938}', name:'Наклон к ногам', desc:'Сидя, ноги вытянуты, тянемся к носкам.', time:30,
+      detail:'Сядьте на пол, ноги вытянуты вперёд. Медленно наклоняйтесь вперёд, тянитесь руками к носкам. Держите 20 секунд.',
+      tips:['Спина прямая','Тянитесь животом','Не рывки'] },
+    { emoji:'\u{1F98B}', name:'Бабочка', desc:'Сидя, стопы вместе, колени к полу.', time:30,
+      detail:'Сядьте, согните ноги, соедините стопы. Колени разведены в стороны. Мягко нажмите на бёдра, опуская колени к полу.',
+      tips:['Спина прямо','Колени к полу','Мягко'] },
+    { emoji:'\u{1F405}', name:'Кошка-корова', desc:'На четвереньках: прогиб и округление.', time:25,
+      detail:'На четвереньках. На вдохе — прогнитесь в пояснице, поднимите голову. На выдохе — округлите спину, опустите голову.',
+      tips:['Вдох — прогиб','Выдох — округление','Плавно'] },
+    { emoji:'\u{1F40D}', name:'Кобра', desc:'Лёжа на животе, прогиб, руки у груди.', time:25,
+      detail:'Лягте на живот, ладони у груди. На выдохе выпрямите руки, прогнитесь назад. Голову не запрокидывайте.',
+      tips:['Шея прямо','Прогиб в спине','Локти к телу'] },
+    { emoji:'\u{1F9B6}', name:'Растяжка икр', desc:'Встаньте к стене, одну ногу назад.', time:25,
+      detail:'Встаньте лицом к стене. Правую ногу отставьте назад, выпрямите. Пятку прижимайте к полу. Держите 20 секунд.',
+      tips:['Пятка на полу','Нога прямая','Тянет икру'] },
+    { emoji:'\u{1F9D8}', name:'Поза ребёнка', desc:'На коленях, таз на пятки, руки вперёд.', time:30,
+      detail:'Встаньте на колени, сядьте тазом на пятки. Наклонитесь вперёд, лоб к полу, руки вытяните вперёд. Расслабьтесь.',
+      tips:['Таз на пятки','Лоб к полу','Расслабьтесь'] },
+    { emoji:'\u{1F300}', name:'Скручивание позвоночника', desc:'Лёжа, колени в сторону.', time:25,
+      detail:'Лягте на спину, руки в стороны. Согните правую ногу и переведите колено влево через тело. Голову поверните вправо.',
+      tips:['Плечи на полу','Колено через тело','Голову в сторону'] },
+    { emoji:'\u{1F9B6}', name:'Растяжка квадрицепса', desc:'Стоя, тяните пятку к ягодице.', time:25,
+      detail:'Встаньте прямо. Согните правую ногу, возьмитесь за стопу. Тяните пятку к ягодице. Колени рядом.',
+      tips:['Колени рядом','Тяни к ягодице','Равновесие'] },
+    { emoji:'\u{1F3C4}', name:'Собака мордой вниз', desc:'Руки и ноги на полу, таз вверх.', time:30,
+      detail:'Встаньте на четвереньки. Поднимите таз вверх, выпрямляя ноги и руки. Тело образует перевёрнутую V.',
+      tips:['Таз вверх','Спина прямо','Пятки к полу'] },
+    { emoji:'\u{1F305}', name:'Растяжка шеи', desc:'Мягкие наклоны головы в стороны.', time:20,
+      detail:'Сядьте прямо. Медленно наклоните голову вправо, ухо к плечу. Держите 10 секунд. Повторите влево.',
+      tips:['Мягко','Без рывков','Плечи вниз'] },
+    { emoji:'\u{1F33F}', name:'Растяжка плеч', desc:'Тяните одну руку поперёк груди.', time:20,
+      detail:'Правую руку вытяните поперёк груди. Левой рукой прижмите правый локоть к себе. Тянитесь 15 секунд.',
+      tips:['Плечи вниз','Тяни локоть','15 секунд'] },
+    { emoji:'\u{1F938}', name:'Наклон к ноге стоя', desc:'Стоя, одну ногу вперёд, тянемся к носку.', time:25,
+      detail:'Поставьте правую ногу вперёд на пятку, носок вверх. Наклонитесь вперёд, тянитесь руками к носку.',
+      tips:['Спина прямо','Носок вверх','Тянитесь'] },
+    { emoji:'\u{1F98B}', name:'Растяжка бёдер (голубь)', desc:'Одна нога согнута впереди, другая сзади.', time:30,
+      detail:'Правое колено вперёд, поставьте стопу к левой руке. Левая нога вытянута назад. Опуститесь на предплечья.',
+      tips:['Колено вперёд','Опуститесь ниже','20 секунд'] },
+    { emoji:'\u{1F405}', name:'Растяжка спины (мостик)', desc:'Лёжа на спине, поднимите таз.', time:25,
+      detail:'Лягте на спину, ноги согнуты. Поднимите таз вверх, напрягая ягодицы. Удержите 3 секунды, опустите.',
+      tips:['Таз вверх','Ягодицы напряжены','Медленно'] },
+    { emoji:'\u{1F305}', name:'Растяжка грудных мышц в дверном проёме', desc:'Руки на косяке, шаг вперёд.', time:20,
+      detail:'Встаньте в дверной проём. Обопритесь предплечьями о косяки. Слегка шагните вперёд, растягивая грудные мышцы.',
+      tips:['Предплечья на косяке','Шаг вперёд','Без боли'] }
+  ],
+  cardio: [
+    { emoji:'\u{1F3C3}', name:'Бег на месте высоко', desc:'Бег с высоким подниманием бедра.', time:40,
+      detail:'Бегите на месте, максимально высоко поднимая колени. Бёдра до уровня пояса. Руки энергично двигаются.',
+      tips:['Колени высоко','Интенсивно','Руки активно'] },
+    { emoji:'\u{2B50}', name:'Звёздные прыжки', desc:'Прыжок — руки и ноги в стороны, как звезда.', time:30,
+      detail:'Из полуприседа выпрыгните вверх, раскинув руки и ноги в стороны. Приземлитесь мягко в полуприсед.',
+      tips:['Мягко','Без пауз','Мах руками'] },
+    { emoji:'\u{1F3C4}', name:'Прыжки «Конькобежец»', desc:'Прыжки в сторону с одной ноги на другую.', time:35,
+      detail:'Прыгайте вправо на правой ноге, левую отведите назад. Затем прыжок влево на левой, правую назад.',
+      tips:['Широкий шаг','Мягкое приземление','Колени мягкие'] },
+    { emoji:'\u{1F4AA}', name:'Приседания с прыжком', desc:'Присед, затем прыжок вверх.', time:35,
+      detail:'Присядьте до параллели, выпрыгните вверх. Приземляйтесь мягко в присед и сразу следующий прыжок.',
+      tips:['Прыжок максимум','Мягкое приземление','Без пауз'] },
+    { emoji:'\u{1F3CB}', name:'Бёрпи без отжимания', desc:'Присед, упор, ноги к рукам, прыжок.', time:35,
+      detail:'Присядьте, ладони на полу. Прыгните ногами в упор лёжа. Прыгните обратно к рукам. Выпрыгните вверх.',
+      tips:['Быстро','Без отжимания','Прыжок вверх'] },
+    { emoji:'\u{1F504}', name:'Скрестные шаги (грейпвайн)', desc:'Шаг в сторону, нога за ногой.', time:30,
+      detail:'Шагните вправо, левой ногой шагните за правую скрестно. Шагните вправо, левой перед правой. Затем влево.',
+      tips:['Скрестно','Быстро','В обе стороны'] },
+    { emoji:'\u{1F9B6}', name:'Прыжки на месте', desc:'Прыжки на носках, невысоко.', time:30,
+      detail:'Встаньте прямо, ноги вместе. Прыгайте на носках невысоко, пружиня коленями. Темп быстрый.',
+      tips:['На носках','Невысоко','Быстрый темп'] },
+    { emoji:'\u{1F3C3}', name:'Бег с захлёстом', desc:'Бег, пятки к ягодицам.', time:30,
+      detail:'Бегите на месте, захлёстывая пятками к ягодицам. Бёдра слегка вперёд. Руки активно.',
+      tips:['Пятки к ягодицам','Бёдра вперёд','Быстро'] },
+    { emoji:'\u{2B50}', name:'Присед-выпад-прыжок', desc:'Присед, затем выпад с прыжком.', time:35,
+      detail:'Присядьте, выпрыгните в выпад. Прыжком смените ноги. Чередуйте присед и выпады.',
+      tips:['Смена ног','Интенсивно','Мягко'] },
+    { emoji:'\u{1F4AA}', name:'Прыжки «Лыжник»', desc:'Прыжки в стороны, руки вдоль тела.', time:30,
+      detail:'Прыгайте в стороны — вправо-влево, ноги вместе. Руки двигаются вдоль тела вперёд-назад.',
+      tips:['Ноги вместе','Руки как лыжник','Быстро'] },
+    { emoji:'\u{1F3CB}', name:'Альпинист быстро', desc:'В упоре лёжа, быстро подтягивайте колени.', time:35,
+      detail:'Упор лёжа. Максимально быстро подтягивайте поочерёдно колени к груди. Тело прямое.',
+      tips:['Тело прямо','Быстро','Без пауз'] },
+    { emoji:'\u{1F9B6}', name:'Степ-апы', desc:'Шаг на возвышение и обратно.', time:35,
+      detail:'Найдите ступеньку. Шагните правой ногой на ступень, подтяните левую. Спуститесь. Чередуйте ноги.',
+      tips:['Чередуйте ноги','Быстро','Ступень устойчивая'] },
+    { emoji:'\u{2B50}', name:'Прыжки «Кузнечик»', desc:'Прыжки в стороны на одной ноге.', time:30,
+      detail:'Прыгайте в сторону на правой ноге, затем в другую на левой. Широкие прыжки. Приземляйтесь мягко.',
+      tips:['В стороны','На одной ноге','Мягко'] },
+    { emoji:'\u{1F3C4}', name:'Боксёрские удары', desc:'Боксируйте воздух, ноги в стойке.', time:30,
+      detail:'Встаньте в боксёрскую стойку. Наносите удары поочерёдно правой и левой рукой. Работайте корпусом.',
+      tips:['Стойка бокса','Поочерёдные удары','Работайте корпусом'] },
+    { emoji:'\u{1F504}', name:'Вращения обруча (воображаемый)', desc:'Вращение бёдрами, как с хулахупом.', time:30,
+      detail:'Вращайте бёдрами, как будто крутите обруч. Сначала в одну сторону, затем в другую.',
+      tips:['Круги бёдрами','Быстро','В обе стороны'] }
+  ],
+  core: [
+    { emoji:'\u{1F504}', name:'Скручивания классические', desc:'Лёжа на спине, поднимайте лопатки.', time:30,
+      detail:'Лягте на спину, ноги согнуты. Поднимите лопатки от пола, напрягая верхний пресс. Медленно опустите.',
+      tips:['Поясница на полу','Лопатки вверх','Не тяните шею'] },
+    { emoji:'\u{1F3CB}', name:'Планка классическая', desc:'На локтях, тело прямо.', time:40,
+      detail:'Упор на локтях и носках. Тело — прямая линия. Втяните живот, напрягите ягодицы.',
+      tips:['Тело прямо','Живот втянут','Ягодицы напряжены'] },
+    { emoji:'\u{1F504}', name:'Двойные скручивания', desc:'Поднимайте корпус и колени одновременно.', time:30,
+      detail:'Лягте на спину. Одновременно поднимайте корпус и подтягивайте колени к груди. Медленно опустите.',
+      tips:['Одновременно','Медленно','Весь пресс'] },
+    { emoji:'\u{1F3C4}', name:'Альпинист медленный', desc:'В упоре, медленно подтягивайте колени.', time:35,
+      detail:'Упор лёжа. Медленно подтягивайте правое колено к груди, верните. Левое колено. Тело прямое.',
+      tips:['Медленно','Тело прямо','Контроль'] },
+    { emoji:'\u{1F4AA}', name:'Планка боковая', desc:'На одном локте, тело в линию.', time:25,
+      detail:'Лягте на бок, обопритесь на правый локоть. Поднимите таз, тело в прямую линию. Держите 15 секунд.',
+      tips:['Тело в линию','Таз вверх','15 секунд'] },
+    { emoji:'\u{1F504}', name:'Подъём ног лёжа', desc:'Прямые ноги вверх до 90°.', time:30,
+      detail:'Лягте на спину, ноги прямые. Поднимите прямые ноги до 90°. Медленно опустите, не касаясь пола.',
+      tips:['Поясница на полу','Ноги прямые','Медленно'] },
+    { emoji:'\u{1F3CB}', name:'Мертвый жук', desc:'Лёжа, поочерёдно опускайте руку и ногу.', time:30,
+      detail:'Лягте на спину, руки вверх, ноги согнуты под 90°. Опускайте правую руку и левую ногу. Чередуйте.',
+      tips:['Поясница прижата','Поочерёдно','Медленно'] },
+    { emoji:'\u{1F4AA}', name:'Супермен', desc:'Лёжа на животе, поднимите руки и ноги.', time:25,
+      detail:'Лягте на живот, руки вперёд. Поднимите руки, грудь и ноги. Удержите 2 секунды. Опустите.',
+      tips:['Смотрите вниз','Поднимите всё','2 секунды'] },
+    { emoji:'\u{1F504}', name:'Велосипед', desc:'Лёжа, локоть к противоположному колену.', time:30,
+      detail:'Лягте на спину. Подтяните правое колено, поверните корпус — левый локоть к правому колену. Чередуйте.',
+      tips:['Локоть к колену','Поочерёдно','Поясница на полу'] },
+    { emoji:'\u{1F3CB}', name:'Планка с переходом', desc:'Из планки на локтях — в планку на руках.', time:30,
+      detail:'Из планки на локтях выпрямляйте руки, переходя в планку на ладонях. Затем обратно. Таз неподвижен.',
+      tips:['Тело прямо','Таз неподвижен','Поочерёдно'] },
+    { emoji:'\u{1F504}', name:'Ножницы', desc:'Лёжа, ноги скрещивайте в воздухе.', time:25,
+      detail:'Лягте на спину, руки под ягодицы. Поднимите ноги на 15 см. Скрещивайте ноги в воздухе.',
+      tips:['Поясница на полу','Ноги прямые','Низко над полом'] },
+    { emoji:'\u{1F4AA}', name:'Лодочка', desc:'Лёжа на животе, качание вперёд-назад.', time:25,
+      detail:'Лягте на живот, руки вперёд, ноги прямые. Поднимите руки и ноги. Покачивайтесь вперёд-назад.',
+      tips:['Покачивание','Руки и ноги вверх','Мягко'] }
+  ]
+};
+
+var categoryNames = { warmup:'Разминка', strength:'Силовые упражнения', stretch:'Растяжка', cardio:'Кардио', core:'Кор и пресс' };
+var workoutSlides = [], workoutIndex = 0, workoutTimer = null, currentCategory = '', currentIntensity = 'medium';
+
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i+1)); var tmp = a[i]; a[i]=a[j]; a[j]=tmp; }
+  return a;
+}
+
+function selectWorkoutCategory(cat) {
+  currentCategory = cat;
+  showPage('training-intensity');
+  document.getElementById('intensity-title').textContent = categoryNames[cat] + ' — выберите интенсивность';
+}
+
+function startWorkout(cat, intensity) {
+  currentCategory = cat;
+  currentIntensity = intensity;
+  var cfg = intensityConfig[intensity];
+  showPage('workout');
+  document.getElementById('workout-title').textContent = categoryNames[cat] + ' (' + cfg.label + ')';
+  var picked = shuffle(exerciseData[cat]).slice(0, cfg.count);
+  workoutSlides = [];
+  picked.forEach(function(ex, i) {
+    workoutSlides.push({ type:'exercise', emoji:ex.emoji, name:ex.name, desc:ex.desc, detail:ex.detail, tips:ex.tips, origTime: ex.time, time: Math.round(ex.time * cfg.timeMul) });
+    if (i < picked.length - 1) workoutSlides.push({ type:'rest', name:'Отдых', desc:'Восстановите дыхание.', time: cfg.restTime, emoji:'\u23F8\uFE0F' });
+  });
+  workoutSlides.push({ type:'done', name:'Готово!', emoji:'\u{1F389}' });
+  workoutIndex = 0;
+  renderWorkoutSlide();
+}
+
+function renderWorkoutSlide() {
+  var slide = workoutSlides[workoutIndex];
+  var c = document.getElementById('workout-slide');
+  clearInterval(workoutTimer);
+  if (slide.type === 'done') {
+    var cfg = intensityConfig[currentIntensity];
+    c.innerHTML = '<div class="completion-screen"><div class="icon">\u{1F389}</div><h3>Комплекс завершён!</h3><div class="xp-earned">+' + cfg.xp + ' XP</div><p>Отличная работа!</p><div class="btn-group"><button class="btn" onclick="startWorkout(currentCategory,currentIntensity)">Повторить</button><button class="btn" onclick="showPage(\'training-intensity\')" style="background:#FF9800;">Сменить интенсивность</button><button class="btn" onclick="showPage(\'main\')" style="background:#555;">На главную</button></div></div>';
+    state.workouts++;
+    if (currentCategory === 'cardio') state.cardio++;
+    addXP(cfg.xp); markActiveToday();
+    var hour = new Date().getHours();
+    if (hour < 9) unlockAchievement('early_bird');
+    return;
+  }
+  c.className = 'exercise-slide' + (slide.type === 'rest' ? ' rest-slide' : '');
+  var detailHTML = '';
+  if (slide.detail) {
+    detailHTML = '<div class="exercise-detail">\u{1F4D6} Как выполнять: ' + slide.detail + '</div>';
+  }
+  var tipsHTML = '';
+  if (slide.tips) {
+    tipsHTML = '<div class="exercise-tips">' + slide.tips.map(function(t) { return '<span class="tip-chip">' + t + '</span>'; }).join('') + '</div>';
+  }
+  var cfg = intensityConfig[currentIntensity];
+  c.innerHTML = '<div class="intensity-badge ' + cfg.badgeClass + '">' + cfg.label + '</div><div class="exercise-emoji">' + slide.emoji + '</div><h3>' + slide.name + '</h3><p style="color:#666;">' + slide.desc + '</p>' + detailHTML + tipsHTML + '<div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:100%"></div></div><div class="timer-display" id="timer">\u23F1 ' + slide.time + '</div><p style="color:#888;font-size:0.85rem;">Упражнение ' + getExNum() + ' из ' + getExTotal() + '</p><div class="slide-nav"><button class="slide-btn" onclick="prevWorkout()" ' + (workoutIndex===0?'disabled':'') + '>\u2190 Назад</button><button class="slide-btn" onclick="nextWorkout()">Далее \u2192</button></div>';
+  var total = slide.time;
+  workoutTimer = setInterval(function() {
+    slide.time--;
+    var t = document.getElementById('timer'), f = document.getElementById('progress-fill');
+    if (t) { t.textContent = '\u23F1 ' + slide.time; if (slide.time <= 3) t.classList.add('warning'); }
+    if (f) f.style.width = (slide.time / total * 100) + '%';
+    if (slide.time <= 0) { clearInterval(workoutTimer); nextWorkout(); }
+  }, 1000);
+}
+
+function getExNum() { var c=0; for(var i=0;i<=workoutIndex;i++) if(workoutSlides[i]&&workoutSlides[i].type==='exercise') c++; return c; }
+function getExTotal() { return workoutSlides.filter(function(s){return s.type==='exercise';}).length; }
+function nextWorkout() { if(workoutIndex<workoutSlides.length-1){workoutIndex++;renderWorkoutSlide();} }
+function prevWorkout() { if(workoutIndex>0){workoutIndex--;renderWorkoutSlide();} }
+
+// ===== МЕДИТАЦИЯ =====
+var meditationData = {
+  breathing: { title:'Дыхательная практика', slides: [
+    { emoji:'\u{1F32C}\uFE0F', name:'Подготовка', desc:'Сядьте удобно, выпрямите спину, закройте глаза.', time:10 },
+    { emoji:'\u{1F4A8}', name:'Вдох — 4 сек', desc:'Медленно вдохните через нос, считая до четырёх.', time:8 },
+    { emoji:'\u23F8\uFE0F', name:'Задержка — 4 сек', desc:'Задержите дыхание, сосчитайте до четырёх.', time:8 },
+    { emoji:'\u{1F32C}\uFE0F', name:'Выдох — 4 сек', desc:'Медленно выдохните через рот, считая до четырёх.', time:8 },
+    { emoji:'\u{1F504}', name:'Повторяем цикл', desc:'Вдох 4 — задержка 4 — выдох 4. Дышите спокойно и ритмично.', time:30 },
+    { emoji:'\u{1F4A8}', name:'Вдох', desc:'Снова вдох через нос. Ощутите, как воздух наполняет лёгкие.', time:8 },
+    { emoji:'\u23F8\uFE0F', name:'Задержка', desc:'Плавная задержка. Не напрягайтесь.', time:8 },
+    { emoji:'\u{1F32C}\uFE0F', name:'Выдох', desc:'Полный выдох. Отпустите напряжение.', time:8 },
+    { emoji:'\u{1F319}', name:'Завершение', desc:'Откройте глаза. Сделайте глубокий вдох и выдох. Вы молодец.', time:10 }
+  ]},
+  body: { title:'Сканирование тела', slides: [
+    { emoji:'\u{1F9D8}', name:'Расслабление', desc:'Лягте или сядьте. Дышите спокойно и естественно.', time:15 },
+    { emoji:'\u{1F9B6}', name:'Стопы', desc:'Почувствуйте расслабление в стопах. Отпустите напряжение.', time:20 },
+    { emoji:'\u{1F9B6}', name:'Голени и бёдра', desc:'Переместите внимание выше. Напряжение уходит из ног.', time:20 },
+    { emoji:'\u{1F49C}', name:'Таз и поясница', desc:'Расслабьте поясницу. Позвольте телу стать тяжёлым.', time:20 },
+    { emoji:'\u{1FA76}', name:'Живот и грудь', desc:'Дышите животом. Почувствуйте, как поднимается и опускается грудь.', time:20 },
+    { emoji:'\u{1F4AA}', name:'Руки и плечи', desc:'Расслабьте руки от плеч до кончиков пальцев.', time:20 },
+    { emoji:'\u{1F642}', name:'Лицо', desc:'Расслабьте лоб, глаза, челюсть. Мягкая улыбка.', time:20 },
+    { emoji:'\u{1F319}', name:'Завершение', desc:'Охватите вниманием всё тело. Медленно откройте глаза.', time:15 }
+  ]},
+  rest: { title:'Спокойный отдых', slides: [
+    { emoji:'\u{1F319}', name:'Устройтесь удобно', desc:'Закройте глаза. Дышите естественно, не контролируйте дыхание.', time:15 },
+    { emoji:'\u{1F343}', name:'Отпустите мысли', desc:'Просто наблюдайте за мыслями, не цепляйтесь за них.', time:25 },
+    { emoji:'\u{1F30A}', name:'Дыхание как волна', desc:'Вдох — волна вверх. Выдох — волна вниз. Плавно и ритмично.', time:30 },
+    { emoji:'\u{2601}\uFE0F', name:'Лёгкость', desc:'Тело становится лёгким. Напряжение уходит.', time:25 },
+    { emoji:'\u{1F305}', name:'Возвращение', desc:'Пошевелите пальцами. Медленно возвращайтесь.', time:15 },
+    { emoji:'\u{2728}', name:'Готово', desc:'Откройте глаза. Вы отдохнули.', time:10 }
+  ]},
+  gratitude: { title:'Практика благодарности', slides: [
+    { emoji:'\u{1F49B}', name:'Подготовка', desc:'Сядьте удобно, закройте глаза. Сделайте три глубоких вдоха.', time:15 },
+    { emoji:'\u{1F49A}', name:'Благодарность себе', desc:'Скажите себе спасибо за то, что нашли время для практики.', time:25 },
+    { emoji:'\u{1F49C}', name:'Благодарность близким', desc:'Вспомните дорогих вам людей. Поблагодарите их мысленно.', time:25 },
+    { emoji:'\u{1F49B}', name:'Благодарность за день', desc:'Найдите три хороших момента сегодняшнего дня.', time:25 },
+    { emoji:'\u{1F49A}', name:'Благодарность телу', desc:'Поблагодарите тело за то, что оно делает для вас каждый день.', time:25 },
+    { emoji:'\u{1F49C}', name:'Благодарность за рост', desc:'Признайте свои успехи, даже маленькие. Вы растёте.', time:20 },
+    { emoji:'\u{2728}', name:'Завершение', desc:'Откройте глаза. Носите это чувство с собой весь день.', time:10 }
+  ]}
+};
+var medSlides = [], medIndex = 0, medTimer = null, currentMeditationType = '', currentMeditationIntensity = 'medium';
+
+function selectMeditationType(type) {
+  currentMeditationType = type;
+  showPage('meditation-intensity');
+  document.getElementById('med-intensity-title').textContent = meditationData[type].title + ' — выберите длительность';
+}
+
+function startMeditation(type, intensity) {
+  currentMeditationType = type;
+  currentMeditationIntensity = intensity;
+  var cfg = meditationIntensityConfig[intensity];
+  showPage('meditation');
+  document.getElementById('meditation-title').textContent = meditationData[type].title + ' (' + cfg.label + ')';
+  medSlides = meditationData[type].slides.map(function(s) { return { emoji:s.emoji, name:s.name, desc:s.desc, origTime: s.time, time: Math.max(5, Math.round(s.time * cfg.timeMul)) }; });
+  medSlides.push({ type:'done', name:'Практика завершена', emoji:'\u{2728}', desc:'Вы замечательно справились.' });
+  medIndex = 0;
+  renderMeditationSlide();
+}
+
+function renderMeditationSlide() {
+  var slide = medSlides[medIndex];
+  var c = document.getElementById('meditation-slide');
+  clearInterval(medTimer);
+  if (slide.type === 'done') {
+    var cfg = meditationIntensityConfig[currentMeditationIntensity];
+    c.innerHTML = '<div class="completion-screen"><div class="icon">\u{2728}</div><h3>Практика завершена</h3><div class="xp-earned">+' + cfg.xp + ' XP</div><p>Вы замечательно справились.</p><div class="btn-group"><button class="btn" onclick="startMeditation(currentMeditationType,currentMeditationIntensity)">Повторить</button><button class="btn" onclick="showPage(\'meditation-intensity\')" style="background:#FF9800;">Сменить длительность</button><button class="btn" onclick="showPage(\'main\')" style="background:#555;">На главную</button></div></div>';
+    state.meditations++; addXP(cfg.xp); markActiveToday(); return;
+  }
+  c.className = 'exercise-slide';
+  var cfg = meditationIntensityConfig[currentMeditationIntensity];
+  c.innerHTML = '<div class="intensity-badge ' + cfg.badgeClass + '">' + cfg.label + '</div><div class="exercise-emoji">' + slide.emoji + '</div><h3>' + slide.name + '</h3><p>' + slide.desc + '</p><div class="progress-bar"><div class="progress-fill" id="med-progress" style="width:100%"></div></div><div class="timer-display" id="med-timer">\u23F1 ' + slide.time + '</div><p style="color:#888;font-size:0.85rem;">Шаг ' + (medIndex+1) + ' из ' + (medSlides.length-1) + '</p><div class="slide-nav"><button class="slide-btn" onclick="prevMed()" ' + (medIndex===0?'disabled':'') + '>\u2190 Назад</button><button class="slide-btn" onclick="nextMed()">Далее \u2192</button></div>';
+  var orig = slide.origTime;
+  medTimer = setInterval(function() {
+    slide.time--;
+    var t = document.getElementById('med-timer'), f = document.getElementById('med-progress');
+    if (t) { t.textContent = '\u23F1 ' + slide.time; if (slide.time <= 3) t.classList.add('warning'); }
+    if (f) f.style.width = (slide.time / orig * 100) + '%';
+    if (slide.time <= 0) { clearInterval(medTimer); nextMed(); }
+  }, 1000);
+}
+
+function nextMed() { if(medIndex<medSlides.length-1){medIndex++;renderMeditationSlide();} }
+function prevMed() { if(medIndex>0){medIndex--;renderMeditationSlide();} }
+
+// ===== ОПРОС =====
+var quizData = [
+  { question:'Как часто вы едите?', options:[
+    {text:'3 раза регулярно',score:3},{text:'2 раза + перекусы',score:2},{text:'1-2, график сбит',score:1},{text:'Бессистемно',score:0}
+  ]},
+  { question:'Сколько овощей в день?', options:[
+    {text:'С каждым приёмом пищи',score:3},{text:'1-2 раза',score:2},{text:'Редко',score:1},{text:'Почти не ем',score:0}
+  ]},
+  { question:'Сколько воды пьёте?', options:[
+    {text:'Больше 1,5 л',score:3},{text:'Около 1 л',score:2},{text:'В основном чай/кофе',score:1},{text:'Почти не пью',score:0}
+  ]},
+  { question:'Сладкое и фастфуд?', options:[
+    {text:'Редко',score:3},{text:'Раз в неделю',score:2},{text:'Несколько раз в неделю',score:1},{text:'Каждый день',score:0}
+  ]},
+  { question:'Завтракаете?', options:[
+    {text:'Каждый день',score:3},{text:'Часто',score:2},{text:'Иногда',score:1},{text:'Почти никогда',score:0}
+  ]},
+  { question:'Тяжесть после еды?', options:[
+    {text:'Нет',score:3},{text:'Иногда',score:2},{text:'Часто переедаю',score:1},{text:'Почти всегда',score:0}
+  ]}
+];
+var quizIndex = 0, quizAnswers = [];
+function startQuiz() { showPage('quiz'); quizIndex = 0; quizAnswers = []; renderQuiz(); }
+function renderQuiz() {
+  var c = document.getElementById('quiz-container');
+  var q = quizData[quizIndex];
+  c.innerHTML = '<div class="quiz-question"><div class="quiz-progress">Вопрос ' + (quizIndex+1) + ' из ' + quizData.length + '</div><h3>' + q.question + '</h3>' + q.options.map(function(o,i){return '<button class="quiz-option" onclick="answerQuiz(' + i + ')">' + o.text + '</button>';}).join('') + '</div>';
+}
+function answerQuiz(i) {
+  quizAnswers.push(quizData[quizIndex].options[i].score);
+  quizIndex++;
+  if (quizIndex < quizData.length) renderQuiz(); else showQuizResult();
+}
+function showQuizResult() {
+  var total = quizAnswers.reduce(function(a,b){return a+b;},0);
+  var max = quizData.length * 3;
+  var pct = Math.round(total / max * 100);
+  var title, advice, emoji;
+  if (pct >= 80) { title='Отличный результат!'; emoji='\u{1F31F}'; advice='Ваше питание почти идеальное! Пробуйте новые овощи и крупы, добавьте рыбу и орехи.'; }
+  else if (pct >= 50) { title='Хороший старт'; emoji='\u{1F4AA}'; advice='Добавьте овощи в каждый приём пищи, пейте больше воды, старайтесь завтракать.'; }
+  else { title='Стоит заняться питанием'; emoji='\u{1F331}'; advice='Начните с простого: стакан воды утром, овощи раз в день, регулярный завтрак.'; }
+  document.getElementById('quiz-container').innerHTML = '<div class="quiz-result"><div class="exercise-emoji">' + emoji + '</div><h3>' + title + '</h3><div class="score">' + pct + '%</div><p>' + advice + '</p><div style="margin-top:25px;"><button class="btn" onclick="startQuiz()">Пройти заново</button><button class="btn" onclick="showPage(\'main\')" style="background:#555;">На главную</button></div></div>';
+  state.quizzes++; addXP(40); markActiveToday();
+}
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+loadState();
+checkStreak();
+showQuote();
+renderAuthArea();
+updateUI();
+</script>
+</body>
+</html>
